@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad-Free YouTube Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1f1f1f; /* Dark mode background color */
+            color: #fff; /* Text color in dark mode */
+            text-align: center;
+            margin: 20px;
+        }
+        iframe {
+            width: 80%;
+            max-width: 800px; /* Set a maximum width for larger screens */
+            height: 450px; /* Set a fixed height based on 16:9 aspect ratio */
+            margin-top: 20px;
+        }
+        input {
+            width: 60%;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px;
+            cursor: pointer;
+        }
+        form {
+            margin-top: 20px;
+        }
+        div {
+            margin-top: 20px;
+        }
+        img.logo {
+            width: 100px; /* Set the width of the logo image */
+            height: auto;
+            margin-top: 10px;
+            display: block; /* Make the image a block element for centering */
+            margin-left: auto;
+            margin-right: 2%;
+        }
+        h1 {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        span.title {
+            font-size: 1.5em;
+            font-weight: bold;
+	    margin-right: auto;
+        }
+    </style>
+    <link id="favicon" rel="icon" type="image/png" href="" /> <!-- Dynamic favicon -->
+</head>
+<body>
+
+    <h1>
+        <img src="" alt="Logo" class="logo" id="logoImage" /> <!-- Dynamic logo image -->
+        <span class="title">Ad-Free YouTube Player</span>
+    </h1>
+
+    <form id="videoForm">
+        <label for="videoUrl">Enter YouTube Video URL:</label>
+        <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=a5jy6mLelAU">
+        <button type="button" onclick="loadVideo()">Load Video</button>
+    </form>
+
+    <iframe id="videoFrame" width="560" height="315" src="https://www.youtube.com/embed/a5jy6mLelAU" frameborder="0" allowfullscreen></iframe>
+
+    <p>This is a simple third-party UI for playing a YouTube video.</p>
+
+    <div>
+        <button onclick="navigateHistory(-1)">Previous</button>
+        <button onclick="navigateHistory(1)">Next</button>
+    </div>
+
+    <script>
+        // Array of logo images
+        var logoImages = [
+            "https://static.wikia.nocookie.net/houkai-star-rail/images/1/14/Guinaifen_Sticker_04.png/revision/latest?cb=20231109231626",
+            "https://static.wikia.nocookie.net/houkai-star-rail/images/6/61/Guinaifen_Sticker_05.png/revision/latest?cb=20231109231637",
+            "https://static.wikia.nocookie.net/houkai-star-rail/images/f/fd/Guinaifen_Sticker_01.png/revision/latest?cb=20231009105203",
+            "https://static.wikia.nocookie.net/houkai-star-rail/images/6/6b/Guinaifen_Sticker_02.png/revision/latest?cb=20231009105217",
+            "https://static.wikia.nocookie.net/houkai-star-rail/images/f/f1/Guinaifen_Sticker_03.png/revision/latest?cb=20231009105231"
+        ];
+
+        // Function to set a random logo image
+        function setRandomLogo() {
+            var logoImage = document.getElementById('logoImage');
+            var randomIndex = Math.floor(Math.random() * logoImages.length);
+            var randomLogo = logoImages[randomIndex];
+            logoImage.src = randomLogo;
+
+            // Set the favicon dynamically as well
+            var favicon = document.getElementById('favicon');
+            favicon.href = randomLogo;
+        }
+
+        // Call the function to set a random logo on page load
+        setRandomLogo();
+
+        var videoHistory = [];
+        var currentIndex = -1;
+
+        function loadVideo() {
+            var videoUrl = document.getElementById('videoUrl').value;
+            var videoFrame = document.getElementById('videoFrame');
+            var videoId = extractVideoId(videoUrl);
+
+            if (videoId) {
+                videoFrame.src = 'https://www.youtube.com/embed/' + videoId;
+                addToHistory(videoUrl);
+            } else {
+                alert('Invalid YouTube URL');
+            }
+        }
+
+        function addToHistory(url) {
+            if (url && videoHistory.indexOf(url) === -1) {
+                videoHistory.push(url);
+                currentIndex = videoHistory.length - 1;
+            }
+        }
+
+        function navigateHistory(direction) {
+            currentIndex += direction;
+
+            if (currentIndex < 0) {
+                currentIndex = 0;
+            } else if (currentIndex >= videoHistory.length) {
+                currentIndex = videoHistory.length - 1;
+            }
+
+            if (videoHistory.length > 0) {
+                document.getElementById('videoUrl').value = videoHistory[currentIndex];
+                loadVideo();
+            }
+        }
+
+        function extractVideoId(url) {
+            var match = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+            return match ? match[1] : null;
+        }
+    </script>
+
+</body>
+</html>
